@@ -1,0 +1,24 @@
+{
+  "name": "next-stripe-app-func",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SatakeYusuke19920527/next-stripe-app-func.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SatakeYusuke19920527/next-stripe-app-func/issues"
+  },
+  "homepage": "https://github.com/SatakeYusuke19920527/next-stripe-app-func#readme",
+  "dependencies": {
+    "firebase-admin": "^10.0.1",
+    "firebase-functions": "^3.16.0"
+  }
+}
