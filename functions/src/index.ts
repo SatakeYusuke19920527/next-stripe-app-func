@@ -16,53 +16,286 @@ const client = new line.Client(config);
 
 exports.helloworld = functions.https.onRequest(async (req, res) => {
   // Send back a message that we've successfully written the message
-  res.json({result: `Hello world`});
+  var data = req.body;
+  console.log(data, '======');
+    client
+      .pushMessage('U61ed7c0ea5f5217bc8b8ed7f5f822ba1', {
+      type: "text",
+      text: "Hello World!",
+    })
+      .then(() => {
+        console.log('send message success!!!');
+      })
+      .catch((err: any) => {
+        // error handling
+        console.log('🚀 ~ file: Login.tsx ~ line 21 ~ sendMessage ~ err', err);
+      });
+  
+  
 });
 
 exports.checkFirestore = functions.firestore.document('/appointment/{documentId}')
   .onCreate((snap, context) => {
     const newValue = snap.data();
-      // access a particular field as you would any JS property
-    const name = newValue.name;
+    const myname = newValue.myname;
+    const yourname = newValue.yourname;
+    const uid = newValue.uid
     const message =
-      `【予約が完了致しました。】
-    ${name}様
-    ご予約誠にありがとうございます！
-    ${newValue.date}にお会いできることを楽しみにしております！
-    satake
-    `
-        client.broadcast({
-          type: "text",
-          text: message
-        }).then(data => console.log(data))
-          .catch(e => console.log(e))
-})
+      `【相性診断が完了致しました。】
+    ${myname}さんと${yourname}さんの相性は...70%です！！`
+    client
+      .pushMessage(uid, {
+      type: "text",
+      text: message,
+    })
+      .then(() => {
+        console.log('send message success!!!');
+      })
+      .catch((err: any) => {
+        // error handling
+        console.log('🚀 ~ file: Login.tsx ~ line 21 ~ sendMessage ~ err', err.message);
+      });
+    // client
+    //   .pushMessage(uid, {
+    //   type: "text",
+    //   text: `${myname}さんの好きな方は${yourname}さんでした`,
+    // })
+    //   .then(() => {
+    //     console.log('send message success!!!');
+    //   })
+    //   .catch((err: any) => {
+    //     // error handling
+    //     console.log('🚀 ~ file: Login.tsx ~ line 21 ~ sendMessage ~ err', err.message);
+    //   });
+  })
 
-// // Take the text parameter passed to this HTTP endpoint and insert it into
-// // Firestore under the path /messages/:documentId/original
-// exports.addMessage = functions.https.onRequest(async (req, res) => {
-//   // Grab the text parameter.
-//   const original = req.query.text;
-//   // Push the new message into Firestore using the Firebase Admin SDK.
-//   const writeResult = await admin.firestore().collection('messages').add({original: original});
-//   // Send back a message that we've successfully written the message
-//   res.json({result: `Message with ID: ${writeResult.id} added.`});
-// });
+//   const flexMessage = (replyToken: string, userName: string, userIMG: string) => {
+//   // replyするメッセージの定義
+//   var postData = {
+//     "replyToken" : replyToken,
+//     "messages" : [
+//       {
+//   "type": "flex",
+//   "altText": "Flex Message",
+//   "contents": {
+//     "type": "bubble",
+//     "hero": {
+//       "type": "image",
+//       "url": userIMG,
+//       "size": "full",
+//       "aspectRatio": "20:13",
+//       "aspectMode": "cover",
+//       "action": {
+//         "type": "uri",
+//         "label": "Line",
+//         "uri": "https://linecorp.com/"
+//       }
+//     },
+//     "body": {
+//       "type": "box",
+//       "layout": "vertical",
+//       "contents": [
+//         {
+//           "type": "text",
+//           "text": userName+"さん",
+//           "size": "xl",
+//           "weight": "bold"
+//         },
+//         {
+//           "type": "box",
+//           "layout": "baseline",
+//           "margin": "md",
+//           "contents": [
+//             {
+//               "type": "text",
+//               "text": "順番待ちを受付けました。",
+//               "flex": 0,
+//               "margin": "md",
+//               "size": "md",
+//               "color": "#000000"
+//             }
+//           ]
+//         }
+//       ]
+//     },
+//     "footer": {
+//       "type": "box",
+//       "layout": "vertical",
+//       "flex": 0,
+//       "spacing": "sm",
+//       "contents": [
+//         {
+//           "type": "button",
+//           "action": {
+//             "type": "message",
+//             "label": "順番待ち確認",
+//             "text": "順番"
+//           },
+//           "height": "sm",
+//           "style": "link"
+//         },
+//         {
+//           "type": "spacer",
+//           "size": "sm"
+//         }
+//       ]
+//     }
+//   }
+// }
+//     ]
+//   };
+//   return postMessage(postData);
+//   }
 
-// Listens for new messages added to /messages/:documentId/original and creates an
-// uppercase version of the message to /messages/:documentId/uppercase
-// exports.makeUppercase = functions.firestore.document('/appointment/{documentId}')
-//     .onCreate((snap, context) => {
-//       // Grab the current value of what was written to Firestore.
-//       const original = snap.data().original;
+  //FlexMessageの作成
+// function push() {
 
-//       // Access the parameter `{documentId}` with `context.params`
-//       functions.logger.log('Uppercasing', context.params.documentId, original);
+//   var url = "https://api.line.me/v2/bot/message/push";
+//   var headers = {
+//     "Content-Type" : "application/json; charset=UTF-8",
+//     'Authorization': 'Bearer ' + process.env.NEXT_PUBLIC_LINE_ACCESS_TOKEN!,
+//   };
+//   var postData = {
+//     "to" : to,
+//     "messages" : [
+//       {
+//   "type": "flex",
+//   "altText": "順番が来ました。",
+//   "contents": {
+//     "type": "bubble",
+//     "hero": {
+//       "type": "image",
+//       "url": "https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png",
+//       "size": "full",
+//       "aspectRatio": "20:13",
+//       "aspectMode": "cover",
+//       "action": {
+//         "type": "uri",
+//         "label": "Line",
+//         "uri": "https://linecorp.com/"
+//       }
+//     },
+//     "body": {
+//       "type": "box",
+//       "layout": "vertical",
+//       "contents": [
+//         {
+//           "type": "text",
+//           "text": "順番になりました",
+//           "size": "xl",
+//           "weight": "bold"
+//         },
+//         {
+//           "type": "box",
+//           "layout": "baseline",
+//           "margin": "md",
+//           "contents": [
+//             {
+//               "type": "text",
+//               "text": "＊＊＊分以内にお越しください。",
+//               "flex": 0,
+//               "margin": "md",
+//               "size": "sm",
+//               "color": "#F60404"
+//             }
+//           ]
+//         },
+//         {
+//           "type": "box",
+//           "layout": "vertical",
+//           "spacing": "sm",
+//           "margin": "lg",
+//           "contents": [
+//             {
+//               "type": "box",
+//               "layout": "baseline",
+//               "spacing": "sm",
+//               "contents": [
+//                 {
+//                   "type": "text",
+//                   "text": "Place",
+//                   "flex": 1,
+//                   "size": "sm",
+//                   "color": "#AAAAAA"
+//                 },
+//                 {
+//                   "type": "text",
+//                   "text": "Miraina Tower, 4-1-6 Shinjuku, Tokyo",
+//                   "flex": 5,
+//                   "size": "sm",
+//                   "color": "#666666",
+//                   "wrap": true
+//                 }
+//               ]
+//             },
+//             {
+//               "type": "box",
+//               "layout": "baseline",
+//               "spacing": "sm",
+//               "contents": [
+//                 {
+//                   "type": "text",
+//                   "text": "Time",
+//                   "flex": 1,
+//                   "size": "sm",
+//                   "color": "#AAAAAA"
+//                 },
+//                 {
+//                   "type": "text",
+//                   "text": "10:00 - 23:00",
+//                   "flex": 5,
+//                   "size": "sm",
+//                   "color": "#666666",
+//                   "wrap": true
+//                 }
+//               ]
+//             }
+//           ]
+//         }
+//       ]
+//     },
+//     "footer": {
+//       "type": "box",
+//       "layout": "vertical",
+//       "flex": 0,
+//       "spacing": "sm",
+//       "contents": [
+//         {
+//           "type": "button",
+//           "action": {
+//             "type": "uri",
+//             "label": "CALL",
+//             "uri": "https://linecorp.com"
+//           },
+//           "height": "sm",
+//           "style": "link"
+//         },
+//         {
+//           "type": "button",
+//           "action": {
+//             "type": "uri",
+//             "label": "WEBSITE",
+//             "uri": "https://linecorp.com"
+//           },
+//           "height": "sm",
+//           "style": "link"
+//         },
+//         {
+//           "type": "spacer",
+//           "size": "sm"
+//         }
+//       ]
+//     }
+//   }
+// }
+//     ]
+//   };
 
-//       const uppercase = original.toUpperCase();
+//   var options = {
+//     "method" : "post",
+//     "headers" : headers,
+//     "payload" : JSON.stringify(postData)
+//   };
 
-//       // You must return a Promise when performing asynchronous tasks inside a Functions such as
-//       // writing to Firestore.
-//       // Setting an 'uppercase' field in Firestore document returns a Promise.
-//       return snap.ref.set({uppercase}, {merge: true});
-// });
+//   return UrlFetchApp.fetch(url, options);
+// }
